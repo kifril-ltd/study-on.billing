@@ -7,7 +7,7 @@ use App\Entity\User;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UserRegistrationRequestDtoTransformer implements RequestDtoTransformerInterface
+class UserRegistrationRequestDtoTransformer
 {
     private $passwordHasher;
 
