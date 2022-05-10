@@ -11,18 +11,17 @@ security:
                 class: App\Entity\User
                 property: email
     firewalls:
-        login:
-            pattern: ~/api/v1/auth
+        register:
+            pattern: ^api/v1/register
             stateless: true
+        api:
+            pattern: ^/api
+            stateless: true
+            provider: app_user_provider
             json_login:
                 check_path: api_login
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
-        api_register:
-            pattern: ~api/v1/register
-        api:
-            pattern: ~/api
-            stateless: true
             jwt: ~
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -30,9 +29,8 @@ security:
         main:
             lazy: true
             provider: app_user_provider
+            stateless: true
 
-            json_login:
-                check_path: api_login
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
@@ -43,8 +41,8 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/api/v1/register, role: PUBLIC_ACCESS }
-        - { path: ~/api/v1/auth, roles: PUBLIC_ACCESS }
-        - { path: ~/api/v1/, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/v1/auth, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/, roles: IS_AUTHENTICATED_FULLY }
 
 
 when@test:

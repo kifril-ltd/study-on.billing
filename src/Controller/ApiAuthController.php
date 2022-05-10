@@ -21,6 +21,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+#[Route('api/v1')]
 class ApiAuthController extends AbstractController
 {
     private $serializer;
@@ -32,7 +33,7 @@ class ApiAuthController extends AbstractController
         $this->validator = $validator;
     }
 
-    #[Route('/api/v1/auth', name: 'api_login', methods: ['POST'])]
+    #[Route('/auth', name: 'api_login', methods: ['POST'])]
     public function login(#[CurrentUser] ?User $user, JWTTokenManagerInterface $tokenManager): Response
     {
         if (null === $user) {
@@ -49,7 +50,7 @@ class ApiAuthController extends AbstractController
         ], Response::HTTP_OK);
     }
 
-    #[Route('/api/v1/register', name: 'api_registration', methods: ['POST'])]
+    #[Route('/register', name: 'register', methods: ['POST'])]
     public function registration(
         Request $request,
         UserRegistrationRequestDtoTransformer $registrationRequestDtoTransformer,
