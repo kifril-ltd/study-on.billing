@@ -8,10 +8,10 @@ class ErrorTransformer
 {
     public function transformErrorsToArray(ConstraintViolationList $errors)
     {
-        $jsonErorrs = [];
+        $jsonErrors = [];
         foreach ($errors as $error) {
-            $jsonErorrs[$error->getPropertyPath()] = $error->getMessage();
+            $jsonErrors[$error->getPropertyPath()] = $error->getMessage();
         }
-        return $jsonErorrs;
+        return $jsonErrors;
     }
 }
