@@ -28,6 +28,7 @@ class UserFixtures extends Fixture
             $plainPassword
         );
         $user->setPassword($hashedPassword);
+        $user->setBalance(1034.5);
         $manager->persist($user);
 
         $superUser = new User();
@@ -39,6 +40,7 @@ class UserFixtures extends Fixture
         );
         $superUser->setPassword($hashedPassword);
         $superUser->setRoles(['ROLE_SUPER_ADMIN']);
+        $superUser->setBalance(4284.3);
 
         $manager->persist($superUser);
 
