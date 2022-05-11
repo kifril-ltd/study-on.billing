@@ -34,20 +34,9 @@ class ApiAuthController extends AbstractController
     }
 
     #[Route('/auth', name: 'api_login', methods: ['POST'])]
-    public function login(#[CurrentUser] ?User $user, JWTTokenManagerInterface $tokenManager): Response
+    public function login(): Response
     {
-        if (null === $user) {
-            return $this->json([
-                'message' => 'missing credentials',
-            ], Response::HTTP_UNAUTHORIZED);
-        }
-
-        $authDto = (new UserAuthResponseTransformer())->transformFromObject($user);
-        $authDto->token = $tokenManager->create($user);
-
-        return $this->json([
-            $authDto
-        ], Response::HTTP_OK);
+        //auth
     }
 
     #[Route('/register', name: 'register', methods: ['POST'])]
