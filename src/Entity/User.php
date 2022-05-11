@@ -28,11 +28,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'float', options: ['default' => 0])]
     private $balance;
 
-    public function getUsername()
-    {
-        return $this->email;
-    }
-
     public function getId(): ?int
     {
         return $this->id;

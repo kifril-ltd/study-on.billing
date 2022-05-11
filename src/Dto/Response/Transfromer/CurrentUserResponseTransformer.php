@@ -12,7 +12,7 @@ class CurrentUserResponseTransformer
     {
         $currentUserDto = new CurrentUserDto();
 
-        $currentUserDto->username = $user->getUsername();
+        $currentUserDto->username = $user->getEmail();
         $currentUserDto->roles = $user->getRoles();
         $currentUserDto->balance = $user->getBalance();
 
