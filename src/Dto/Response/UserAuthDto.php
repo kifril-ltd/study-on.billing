@@ -2,11 +2,13 @@
 
 namespace App\Dto\Response;
 
+use OpenApi\Annotations as OA;
+
 class UserAuthDto
 {
-
-    public string $username;
-
+    /**
+     * @OA\Property(type="string", title="token")
+     */
     public string $token;
 
     public array $roles;

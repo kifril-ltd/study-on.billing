@@ -10,7 +10,6 @@ class UserAuthResponseTransformer
     public function transformFromObject(User $user): UserAuthDto
     {
         $authDto = new UserAuthDto();
-        $authDto->username = $user->getUsername();
         $authDto->roles = $user->getRoles();
 
         return $authDto;

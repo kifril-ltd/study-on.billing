@@ -4,7 +4,6 @@ namespace App\Dto\Response;
 
 class CurrentUserDto
 {
-
     public string $username;
 
     public array $roles;
