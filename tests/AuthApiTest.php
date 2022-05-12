@@ -61,7 +61,7 @@ class AuthApiTest extends AbstractTest
             content: $this->serializer->serialize($user, 'json')
         );
 
-        $this->assertResponseCode(Response::HTTP_UNAUTHORIZED, $client->getResponse());
+        $this->assertResponseCode(Response::HTTP_UNAUTHORIZED);
 
         self::assertTrue($client->getResponse()->headers->contains(
             'Content-Type',
@@ -91,7 +91,7 @@ class AuthApiTest extends AbstractTest
             content: $this->serializer->serialize($user, 'json')
         );
 
-        $this->assertResponseCode(Response::HTTP_CREATED, $client->getResponse());
+        $this->assertResponseCode(Response::HTTP_CREATED);
 
         self::assertTrue($client->getResponse()->headers->contains(
             'Content-Type',
@@ -121,7 +121,7 @@ class AuthApiTest extends AbstractTest
             content: $this->serializer->serialize($user, 'json')
         );
 
-        $this->assertResponseCode(Response::HTTP_BAD_REQUEST, $client->getResponse());
+        $this->assertResponseCode(Response::HTTP_BAD_REQUEST);
 
         self::assertTrue($client->getResponse()->headers->contains(
             'Content-Type',
@@ -149,7 +149,7 @@ class AuthApiTest extends AbstractTest
             content: $this->serializer->serialize($user, 'json')
         );
 
-        $this->assertResponseCode(Response::HTTP_BAD_REQUEST, $client->getResponse());
+        $this->assertResponseCode(Response::HTTP_BAD_REQUEST);
 
         self::assertTrue($client->getResponse()->headers->contains(
             'Content-Type',
@@ -175,7 +175,7 @@ class AuthApiTest extends AbstractTest
             content: $this->serializer->serialize($user, 'json')
         );
 
-        $this->assertResponseCode(Response::HTTP_BAD_REQUEST, $client->getResponse());
+        $this->assertResponseCode(Response::HTTP_BAD_REQUEST);
 
         self::assertTrue($client->getResponse()->headers->contains(
             'Content-Type',
@@ -206,7 +206,7 @@ class AuthApiTest extends AbstractTest
             content: $this->serializer->serialize($user, 'json')
         );
 
-        $this->assertResponseCode(Response::HTTP_BAD_REQUEST, $client->getResponse());
+        $this->assertResponseCode(Response::HTTP_BAD_REQUEST);
 
         self::assertTrue($client->getResponse()->headers->contains(
             'Content-Type',
@@ -232,7 +232,7 @@ class AuthApiTest extends AbstractTest
             content: $this->serializer->serialize($user, 'json')
         );
 
-        $this->assertResponseCode(Response::HTTP_BAD_REQUEST, $client->getResponse());
+        $this->assertResponseCode(Response::HTTP_BAD_REQUEST);
 
         self::assertTrue($client->getResponse()->headers->contains(
             'Content-Type',

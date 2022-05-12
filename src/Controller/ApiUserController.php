@@ -89,8 +89,9 @@ class ApiUserController extends AbstractController
         }
 
         $userDto = (new CurrentUserResponseTransformer())->transformFromObject($user);
-        return $this->json([
-            $userDto
-        ], Response::HTTP_OK);
+        return $this->json(
+            $userDto,
+            Response::HTTP_OK
+        );
     }
 }
