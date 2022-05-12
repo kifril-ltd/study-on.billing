@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use OpenApi\Annotations as OA;
 
@@ -182,7 +183,8 @@ class ApiAuthController extends AbstractController
         UserRepository                        $userRepository,
         EntityManagerInterface                $entityManager,
         JWTTokenManagerInterface              $tokenManager
-    ): Response {
+    ): Response
+    {
         $userDto = $this->serializer->deserialize(
             $request->getContent(),
             UserRegistrationDto::class,
@@ -190,27 +192,34 @@ class ApiAuthController extends AbstractController
         );
 
         $errors = $this->validator->validate($userDto);
-
+        if ($userRepository->findOneBy(['email' => $userDto->username])) {
+            $errors->add(new ConstraintViolation(
+                message: 'User ' . $userDto->username .  ' already exists.',
+                messageTemplate: 'User {{ value }} already exists.',
+                parameters: ['value' => $userDto->username],
+                root: $userDto,
+                propertyPath: 'username',
+                invalidValue: $userDto->username
+            ));
+        }
         if (count($errors) > 0) {
             return $this->json([
                 'errors' => (new ErrorTransformer())->transformErrorsToArray($errors),
             ], Response::HTTP_BAD_REQUEST);
         }
-        if ($userRepository->findOneBy(['email' => $userDto->username])) {
-            return $this->json([
-                'error' => 'User already exists.',
-            ], Response::HTTP_BAD_REQUEST);
-        }
+
 
         $user = $registrationRequestDtoTransformer->transformToObject($userDto);
+        $user->setBalance(0);
         $entityManager->persist($user);
         $entityManager->flush();
 
         $authDto = (new UserAuthResponseTransformer())->transformFromObject($user);
         $authDto->token = $tokenManager->create($user);
 
-        return $this->json([
+        return $this->json(
             $authDto,
-        ], Response::HTTP_CREATED);
+            Response::HTTP_CREATED
+        );
     }
 }

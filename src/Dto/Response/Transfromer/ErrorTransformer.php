@@ -10,7 +10,7 @@ class ErrorTransformer
     {
         $jsonErrors = [];
         foreach ($errors as $error) {
-            $jsonErrors[$error->getPropertyPath()] = $error->getMessage();
+                $jsonErrors[$error->getPropertyPath()][] = $error->getMessage();
         }
         return $jsonErrors;
     }
