@@ -178,13 +178,12 @@ class ApiAuthController extends AbstractController
      */
     #[Route('/register', name: 'register', methods: ['POST'])]
     public function registration(
-        Request                               $request,
+        Request $request,
         UserRegistrationRequestDtoTransformer $registrationRequestDtoTransformer,
-        UserRepository                        $userRepository,
-        EntityManagerInterface                $entityManager,
-        JWTTokenManagerInterface              $tokenManager
-    ): Response
-    {
+        UserRepository $userRepository,
+        EntityManagerInterface $entityManager,
+        JWTTokenManagerInterface $tokenManager
+    ): Response {
         $userDto = $this->serializer->deserialize(
             $request->getContent(),
             UserRegistrationDto::class,
