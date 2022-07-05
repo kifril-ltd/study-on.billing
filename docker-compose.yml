@@ -1,9 +1,14 @@
 version: "3.1"
 volumes:
   postgres: ~
+
+networks:
+  billing_study_on:
+    driver: bridge
+    name: billing_study_on
 services:
   nginx:
-    container_name: ${APP_NAME}_nginx
+    container_name: billing.study-on.local
     image: nginx:alpine
     working_dir: /app
     volumes:
@@ -14,6 +19,8 @@ services:
       - "${NGINX_PORT}:80"
     links:
       - php
+    networks:
+      - billing_study_on
   postgres:
     container_name: ${APP_NAME}_postgres
     ports:  #Нельзя использовать проброс портов на реальном проекте
@@ -24,6 +31,8 @@ services:
     environment:
       POSTGRES_USER: ${PG_USER}
       POSTGRES_PASSWORD: ${PG_PASSWORD}
+    networks:
+      - billing_study_on
   php:
     container_name: ${APP_NAME}_php
     build: docker/images/php
@@ -36,3 +45,5 @@ services:
       - COMPOSER_ALLOW_SUPERUSER=1
     links:
       - postgres
+    networks:
+      - billing_study_on
