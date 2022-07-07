@@ -2,7 +2,7 @@
 
 namespace App\Dto\Response;
 
-use OpenApi\Annotations as OA;
+use JMS\Serializer\Annotation as Serialization;
 
 class UserAuthDto
 {
