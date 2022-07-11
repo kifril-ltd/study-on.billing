@@ -8,6 +8,8 @@ use App\Dto\Response\Transfromer\ErrorTransformer;
 use App\Dto\Response\Transfromer\UserAuthResponseTransformer;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGeneratorInterface;
+use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
 use JMS\Serializer\SerializerBuilder;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -124,6 +126,10 @@ class ApiAuthController extends AbstractController
      *          type="string"
      *        ),
      *        @OA\Property(
+     *          property="refresh_token",
+     *          type="string"
+     *        ),
+     *        @OA\Property(
      *          property="roles",
      *          type="array",
      *          @OA\Items(type="string")
@@ -182,7 +188,9 @@ class ApiAuthController extends AbstractController
         UserRegistrationRequestDtoTransformer $registrationRequestDtoTransformer,
         UserRepository $userRepository,
         EntityManagerInterface $entityManager,
-        JWTTokenManagerInterface $tokenManager
+        JWTTokenManagerInterface $tokenManager,
+        RefreshTokenGeneratorInterface $refreshTokenGenerator,
+        RefreshTokenManagerInterface $refreshTokenManager
     ): Response {
         $userDto = $this->serializer->deserialize(
             $request->getContent(),
@@ -213,8 +221,12 @@ class ApiAuthController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
+        $refreshToken = $refreshTokenGenerator->createForUserWithTtl($user, (new \DateTime())->modify('+1 month'));
+        $refreshTokenManager->save($refreshToken);
+
         $authDto = (new UserAuthResponseTransformer())->transformFromObject($user);
         $authDto->token = $tokenManager->create($user);
+        $authDto->refreshToken = $refreshToken->getRefreshToken();
 
         return $this->json(
             $authDto,
