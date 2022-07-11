@@ -14,12 +14,14 @@ security:
         login:
             pattern: ^/api/v1/auth
             stateless: true
-            entry_point: jwt
             json_login:
                 check_path: api_login
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
-            jwt: ~
+        api_token_refresh:
+            pattern: ^/api/v1/token/refresh
+            stateless: true
+            provider: app_user_provider
             refresh_jwt:
                 check_path: /api/v1/token/refresh
         register:
@@ -28,6 +30,7 @@ security:
         api:
             pattern: ^/api
             stateless: true
+            jwt: ~
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
@@ -49,7 +52,7 @@ security:
         - { path: ^/api/v1/auth, roles: PUBLIC_ACCESS }
         - { path: ^/api/v1/doc, roles: PUBLIC_ACCESS }
         - { path: ^/api/v1/courses, roles: PUBLIC_ACCESS }
-        - { path: ^/api/v1/refresh, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/token/refresh, roles: PUBLIC_ACCESS }
         - { path: ^/api/v1/, roles: IS_AUTHENTICATED_FULLY }
 
 

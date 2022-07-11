@@ -6,12 +6,12 @@ use JMS\Serializer\Annotation as Serialization;
 
 class UserAuthDto
 {
-    #[Serialization\Type("string")]
+    #[Serialization\Type('string')]
     public string $token;
 
-    #[Serialization\Type("string")]
+    #[Serialization\Type('string')]
     public string $refreshToken;
 
-    #[Serialization\Type("array")]
+    #[Serialization\Type('array<string>')]
     public array $roles;
 }

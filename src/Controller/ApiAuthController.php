@@ -6,13 +6,16 @@ use App\Dto\Request\Transformer\UserRegistrationRequestDtoTransformer;
 use App\Dto\Request\UserRegistrationDto;
 use App\Dto\Response\Transfromer\ErrorTransformer;
 use App\Dto\Response\Transfromer\UserAuthResponseTransformer;
+use App\Dto\Response\UserAuthDto;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGeneratorInterface;
 use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
 use JMS\Serializer\SerializerBuilder;
+use JMS\Serializer\SerializerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -190,7 +193,8 @@ class ApiAuthController extends AbstractController
         EntityManagerInterface $entityManager,
         JWTTokenManagerInterface $tokenManager,
         RefreshTokenGeneratorInterface $refreshTokenGenerator,
-        RefreshTokenManagerInterface $refreshTokenManager
+        RefreshTokenManagerInterface $refreshTokenManager,
+        SerializerInterface $serializer
     ): Response {
         $userDto = $this->serializer->deserialize(
             $request->getContent(),
@@ -221,16 +225,17 @@ class ApiAuthController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
-        $refreshToken = $refreshTokenGenerator->createForUserWithTtl($user, (new \DateTime())->modify('+1 month'));
+        $refreshToken = $refreshTokenGenerator->createForUserWithTtl($user, (new \DateTime())->modify('+1 month')->getTimestamp());
         $refreshTokenManager->save($refreshToken);
 
         $authDto = (new UserAuthResponseTransformer())->transformFromObject($user);
         $authDto->token = $tokenManager->create($user);
         $authDto->refreshToken = $refreshToken->getRefreshToken();
 
-        return $this->json(
-            $authDto,
-            Response::HTTP_CREATED
-        );
+        $response = new JsonResponse();
+        $response->setContent($serializer->serialize($authDto, 'json'));
+        $response->setStatusCode(Response::HTTP_CREATED);
+
+        return $response;
     }
 }
