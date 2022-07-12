@@ -3,7 +3,11 @@
 namespace App\Tests;
 
 use App\DataFixtures\UserFixtures;
+use App\Service\PaymentService;
+use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGeneratorInterface;
+use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AuthApiTest extends AbstractTest
 {
@@ -13,12 +17,18 @@ class AuthApiTest extends AbstractTest
     protected function setUp(): void
     {
         parent::setUp();
-        $this->serializer = self::$kernel->getContainer()->get('jms_serializer');
+        $this->serializer = self::getContainer()->get('jms_serializer');
     }
 
     protected function getFixtures(): array
     {
-        return [UserFixtures::class];
+        return [
+            new UserFixtures(
+                self::getContainer()->get(UserPasswordHasherInterface::class),
+                self::getContainer()->get(PaymentService::class),
+                self::getContainer()->get(RefreshTokenGeneratorInterface::class),
+                self::getContainer()->get(RefreshTokenManagerInterface::class)
+            )];
     }
 
     public function testAuthWithExistingUser(): void
@@ -44,6 +54,7 @@ class AuthApiTest extends AbstractTest
         ));
         $json = json_decode($client->getResponse()->getContent(), true);
         self::assertNotEmpty($json['token']);
+        self::assertNotEmpty($json['refresh_token']);
     }
 
     public function testAuthWithNotExistingUser(): void
@@ -100,6 +111,7 @@ class AuthApiTest extends AbstractTest
 
         $json = json_decode($client->getResponse()->getContent(), true);
         self::assertNotEmpty($json['token']);
+        self::assertNotEmpty($json['refresh_token']);
         self::assertNotEmpty($json['roles']);
 
         self::assertContains('ROLE_USER', $json['roles']);

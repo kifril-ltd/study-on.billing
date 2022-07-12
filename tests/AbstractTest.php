@@ -63,11 +63,11 @@ abstract class AbstractTest extends WebTestCase
     protected function loadFixtures(array $fixtures = [])
     {
         $loader = new Loader();
-        $hasher = static::getContainer()->get('security.user_password_hasher');
+        //$hasher = static::getContainer()->get('security.user_password_hasher');
         foreach ($fixtures as $fixture) {
-            if (!\is_object($fixture)) {
-                $fixture = new $fixture($hasher);
-            }
+//            if (!\is_object($fixture)) {
+//                $fixture = new $fixture($hasher);
+//            }
 
             if ($fixture instanceof ContainerAwareInterface) {
                 $fixture->setContainer(static::getContainer());

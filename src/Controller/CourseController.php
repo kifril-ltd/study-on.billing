@@ -77,7 +77,6 @@ class CourseController extends AbstractController
                 'code' => Response::HTTP_NOT_FOUND,
                 'message' => 'Данный курс не найден',
             ];
-            throw new \Exception($dataResponse['message'], $dataResponse['code']);
         }
 
 

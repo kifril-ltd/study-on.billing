@@ -6,8 +6,12 @@ use App\DataFixtures\UserFixtures;
 use App\Dto\Request\UserRegistrationDto;
 use App\Dto\Response\CurrentUserDto;
 use App\Entity\User;
+use App\Service\PaymentService;
+use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGeneratorInterface;
+use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserApiTest extends AbstractTest
 {
@@ -17,12 +21,17 @@ class UserApiTest extends AbstractTest
     protected function setUp(): void
     {
         parent::setUp();
-        $this->serializer = self::$kernel->getContainer()->get('jms_serializer');
+        $this->serializer = self::getContainer()->get('jms_serializer');
     }
 
     protected function getFixtures(): array
     {
-        return [UserFixtures::class];
+        return [new UserFixtures(
+            self::getContainer()->get(UserPasswordHasherInterface::class),
+            self::getContainer()->get(PaymentService::class),
+            self::getContainer()->get(RefreshTokenGeneratorInterface::class),
+            self::getContainer()->get(RefreshTokenManagerInterface::class)
+        )];
     }
 
     private function getToken($user)
@@ -33,7 +42,7 @@ class UserApiTest extends AbstractTest
             '/api/v1/auth',
             [],
             [],
-            [ 'CONTENT_TYPE' => 'application/json' ],
+            ['CONTENT_TYPE' => 'application/json'],
             $this->serializer->serialize($user, 'json')
         );
 
