@@ -59,6 +59,7 @@ class CourseFixtures extends Fixture
             $newCourse = new Course();
             $newCourse->setCode($course['code']);
             $newCourse->setType($course['type']);
+            $newCourse->setTitle($course['title']);
             if (isset($course['price'])) {
                 $newCourse->setPrice($course['price']);
             }

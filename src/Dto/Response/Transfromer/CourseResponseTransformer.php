@@ -16,6 +16,7 @@ class CourseResponseTransformer
         foreach ($courses as $course) {
             $dto = new CourseDto();
             $dto->code = $course->getCode();
+            $dto->title = $course->getTitle();
             $dto->type = $course->getType();
             $dto->price = $course->getPrice();
 
@@ -29,6 +30,7 @@ class CourseResponseTransformer
     {
         $dto = new CourseDto();
         $dto->code = $course->getCode();
+        $dto->title = $course->getTitle();
         $dto->type = $course->getType();
         $dto->price = $course->getPrice();
 

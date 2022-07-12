@@ -10,6 +10,9 @@ class CourseDto
     public string $code;
 
     #[Serialization\Type("string")]
+    public string $title;
+
+    #[Serialization\Type("string")]
     public string $type;
 
     #[Serialization\Type("float")]
