@@ -24,6 +24,12 @@ class Course
         3 => 'buy'
     ];
 
+    private const COURSE_TYPES_REVERSE = [
+        'rent' => 1,
+        'free' => 2,
+        'buy' => 3
+    ];
+
     #[ORM\Column(type: 'smallint')]
     private $type;
 
@@ -122,5 +128,13 @@ class Course
         $this->title = $title;
 
         return $this;
+    }
+
+    public function updateFromDto($courseDto)
+    {
+        $this->setCode($courseDto->code);
+        $this->setTitle($courseDto->title);
+        $this->setType(self::COURSE_TYPES_REVERSE[$courseDto->type]);
+        $this->setPrice($courseDto->price);
     }
 }

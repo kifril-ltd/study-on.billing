@@ -11,10 +11,16 @@ class CourseCreationTransformer
 {
         public static function transformToObject(CourseCreationRequestDto $courseCreationDto): Course
     {
+        $courseTypes = [
+            'rent' => 1,
+            'free' => 2,
+            'buy' => 3
+        ];
+
         $course = new Course();
         $course->setCode($courseCreationDto->code);
         $course->setTitle($courseCreationDto->title);
-        $course->setType($courseCreationDto->type);
+        $course->setType($courseTypes[$courseCreationDto->type]);
         $course->setPrice($courseCreationDto->price);
 
         return $course;

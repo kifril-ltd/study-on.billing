@@ -201,6 +201,7 @@ class CourseController extends AbstractController
             /** @var CourseCreationRequestDto $courseCreationRequest */
             $courseCreationRequest = $serializer->deserialize($request->getContent(), CourseCreationRequestDto::class, 'json');
             $course = $courseRepository->findOneBy(['code' => $courseCreationRequest->code]);
+
             if ($course) {
                 return new JsonResponse(
                     [
@@ -332,7 +333,7 @@ class CourseController extends AbstractController
             $courseEditRequest = $serializer->deserialize($request->getContent(), CourseCreationRequestDto::class, 'json');
 
             $courseNewCode = $courseRepository->findOneBy(['code' => $courseEditRequest->code]);
-            if ($courseNewCode) {
+            if ($courseEditRequest->code !== $code && $courseNewCode) {
                 return new JsonResponse(
                     [
                         'success' => false,
@@ -353,10 +354,7 @@ class CourseController extends AbstractController
                 );
             }
 
-            $course->setCode($courseEditRequest->code);
-            $course->setTitle($courseEditRequest->title);
-            $course->setType($courseEditRequest->type);
-            $course->setPrice($courseEditRequest->price);
+            $course->updateFromDto($courseEditRequest);
 
             $manager->flush();
 

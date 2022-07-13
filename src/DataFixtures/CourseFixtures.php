@@ -18,6 +18,12 @@ class CourseFixtures extends Fixture
                 'price' => 2000,
             ],
             [
+                'code' => 'PPBIB3',
+                'title' => 'Программирование на Python (базовый)',
+                'type' => 2,
+                'price' => 2000,
+            ],
+            [
                 'code' => 'PPBI',
                 'title' => 'Программирование на Python (продвинутый)',
                 'type' => 1,
