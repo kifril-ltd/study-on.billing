@@ -43,8 +43,9 @@ class PaymentReportCommand extends Command
         $transactions = $this->transactionRepository->getPayStatisticPerMonth();
 
         if ($transactions) {
-            $startDate = (new \DateTime())->format('d.m.Y');
-            $endDate = (new \DateTime())->modify('-1 month')->format('d.m.Y');
+            $startDate = (new \DateTime())->modify('-1 month')->format('d.m.Y');
+            $endDate = (new \DateTime())->format('d.m.Y');
+
 
             $total = array_sum(array_column($transactions, 'total_amount'));
 
