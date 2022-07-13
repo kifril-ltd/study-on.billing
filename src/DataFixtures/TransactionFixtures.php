@@ -62,6 +62,22 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
                 'customer' => $user,
                 'createdAt' => (new \DateTimeImmutable())->modify('-6 day'),
             ],
+            [
+                'type' => 1,
+                'amount' => $rentCourses[1]->getPrice(),
+                'expiresAt' => (new \DateTimeImmutable())->modify('+1 day'),
+                'course' => $rentCourses[1],
+                'customer' => $user,
+                'createdAt' => (new \DateTimeImmutable())->modify('-6 day'),
+            ],
+            [
+                'type' => 1,
+                'amount' => $rentCourses[1]->getPrice(),
+                'expiresAt' => (new \DateTimeImmutable())->modify('+3 day'),
+                'course' => $rentCourses[1],
+                'customer' => $user,
+                'createdAt' => (new \DateTimeImmutable())->modify('-6 day'),
+            ],
             // Купленные курсы
             [
                 'type' => 1,
