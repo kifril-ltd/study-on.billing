@@ -329,6 +329,17 @@ class CourseController extends AbstractController
         EntityManagerInterface $manager)
     {
         try {
+            $course = $courseRepository->findOneBy(['code' => $code]);
+            if (!$course) {
+                return new JsonResponse(
+                    [
+                        'success' => false,
+                        'message' => 'Курс с таким кодом не найден'
+                    ],
+                    Response::HTTP_NOT_FOUND
+                );
+            }
+
             /** @var CourseCreationRequestDto $courseEditRequest */
             $courseEditRequest = $serializer->deserialize($request->getContent(), CourseCreationRequestDto::class, 'json');
 
@@ -340,17 +351,6 @@ class CourseController extends AbstractController
                         'message' => 'Курс с таким кодом уже существует'
                     ],
                     Response::HTTP_CONFLICT
-                );
-            }
-
-            $course = $courseRepository->findOneBy(['code' => $code]);
-            if (!$course) {
-                return new JsonResponse(
-                    [
-                        'success' => false,
-                        'message' => 'Курс с таким кодом не найден'
-                    ],
-                    Response::HTTP_NOT_FOUND
                 );
             }
 

@@ -4,6 +4,7 @@ namespace App\Tests;
 
 use App\DataFixtures\CourseFixtures;
 use App\DataFixtures\UserFixtures;
+use App\Dto\Request\CourseCreationRequestDto;
 use App\Dto\Response\CourseDto;
 use App\Dto\Response\PaymentDto;
 use App\Service\PaymentService;
@@ -188,5 +189,234 @@ class CourseControllerTest extends AbstractTest
         );
 
         $this->assertResponseCode(Response::HTTP_UNAUTHORIZED, $client->getResponse());
+    }
+
+    public function testAddCourseAdminUser()
+    {
+        $user = [
+            'username' => 'admin@study-on.local',
+            'password' => 'Qwerty123'
+        ];
+        $token = $this->getToken($user);
+
+        $headers = [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ];
+
+        $courseCreationRequest = new CourseCreationRequestDto();
+        $courseCreationRequest->code = 'TEST';
+        $courseCreationRequest->title = 'TEST';
+        $courseCreationRequest->type = 'rent';
+        $courseCreationRequest->price = 1000;
+
+        $client = self::getClient();
+        $client->request(
+            'POST',
+            $this->apiPath . '/new',
+            server: $headers,
+            content: $this->serializer->serialize($courseCreationRequest, 'json')
+        );
+
+        $this->assertResponseCode(Response::HTTP_CREATED);
+
+        $respose = $this->serializer->deserialize($client->getResponse()->getContent(), 'array', 'json');
+        self::assertEquals(true, $respose['success']);
+    }
+
+
+    public function testAddExistingCourseAdminUser()
+    {
+        $user = [
+            'username' => 'admin@study-on.local',
+            'password' => 'Qwerty123'
+        ];
+        $token = $this->getToken($user);
+
+        $headers = [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ];
+
+        $courseCreationRequest = new CourseCreationRequestDto();
+        $courseCreationRequest->code = 'PPBI';
+        $courseCreationRequest->title = 'TEST';
+        $courseCreationRequest->type = 'rent';
+        $courseCreationRequest->price = 1000;
+
+        $client = self::getClient();
+        $client->request(
+            'POST',
+            $this->apiPath . '/new',
+            server: $headers,
+            content: $this->serializer->serialize($courseCreationRequest, 'json')
+        );
+
+        $this->assertResponseCode(Response::HTTP_CONFLICT);
+
+        $respose = $this->serializer->deserialize($client->getResponse()->getContent(), 'array', 'json');
+        self::assertEquals(false, $respose['success']);
+        self::assertEquals('Курс с таким кодом уже существует', $respose['message']);
+    }
+
+    public function testAddCourseUser()
+    {
+        $user = [
+            'username' => 'user@study-on.local',
+            'password' => 'Qwerty123'
+        ];
+        $token = $this->getToken($user);
+
+        $headers = [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ];
+
+        $courseCreationRequest = new CourseCreationRequestDto();
+        $courseCreationRequest->code = 'PPBI';
+        $courseCreationRequest->title = 'TEST';
+        $courseCreationRequest->type = 'rent';
+        $courseCreationRequest->price = 1000;
+
+        $client = self::getClient();
+        $client->request(
+            'POST',
+            $this->apiPath . '/new',
+            server: $headers,
+            content: $this->serializer->serialize($courseCreationRequest, 'json')
+        );
+
+        $this->assertResponseCode(Response::HTTP_NOT_ACCEPTABLE);
+    }
+
+    public function testEditCourseUser()
+    {
+        $user = [
+            'username' => 'user@study-on.local',
+            'password' => 'Qwerty123'
+        ];
+        $token = $this->getToken($user);
+
+        $headers = [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ];
+
+        $courseCreationRequest = new CourseCreationRequestDto();
+        $courseCreationRequest->code = 'PPBI12';
+        $courseCreationRequest->title = 'TEST';
+        $courseCreationRequest->type = 'rent';
+        $courseCreationRequest->price = 1000;
+
+        $client = self::getClient();
+        $client->request(
+            'POST',
+            $this->apiPath . '/PPBI/edit',
+            server: $headers,
+            content: $this->serializer->serialize($courseCreationRequest, 'json')
+        );
+
+        $this->assertResponseCode(Response::HTTP_NOT_ACCEPTABLE);
+    }
+
+    public function testEditCourseAdminUser()
+    {
+        $user = [
+            'username' => 'admin@study-on.local',
+            'password' => 'Qwerty123'
+        ];
+        $token = $this->getToken($user);
+
+        $headers = [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ];
+
+        $courseCreationRequest = new CourseCreationRequestDto();
+        $courseCreationRequest->code = 'PPBI12';
+        $courseCreationRequest->title = 'TEST';
+        $courseCreationRequest->type = 'rent';
+        $courseCreationRequest->price = 1000;
+
+        $client = self::getClient();
+        $client->request(
+            'POST',
+            $this->apiPath . '/PPBI/edit',
+            server: $headers,
+            content: $this->serializer->serialize($courseCreationRequest, 'json')
+        );
+
+        $this->assertResponseOk();
+
+        $respose = $this->serializer->deserialize($client->getResponse()->getContent(), 'array', 'json');
+        self::assertEquals(true, $respose['success']);
+    }
+
+    public function testEditCourseNewExistingCodeAdminUser()
+    {
+        $user = [
+            'username' => 'admin@study-on.local',
+            'password' => 'Qwerty123'
+        ];
+        $token = $this->getToken($user);
+
+        $headers = [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ];
+
+        $courseCreationRequest = new CourseCreationRequestDto();
+        $courseCreationRequest->code = 'PPBI2';
+        $courseCreationRequest->title = 'TEST';
+        $courseCreationRequest->type = 'rent';
+        $courseCreationRequest->price = 1000;
+
+        $client = self::getClient();
+        $client->request(
+            'POST',
+            $this->apiPath . '/PPBI/edit',
+            server: $headers,
+            content: $this->serializer->serialize($courseCreationRequest, 'json')
+        );
+
+        $this->assertResponseCode(Response::HTTP_CONFLICT);
+
+        $respose = $this->serializer->deserialize($client->getResponse()->getContent(), 'array', 'json');
+        self::assertEquals(false, $respose['success']);
+        self::assertEquals('Курс с таким кодом уже существует', $respose['message']);
+    }
+
+    public function testEditNotExistingCourseCodeAdminUser()
+    {
+        $user = [
+            'username' => 'admin@study-on.local',
+            'password' => 'Qwerty123'
+        ];
+        $token = $this->getToken($user);
+
+        $headers = [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ];
+
+        $courseCreationRequest = new CourseCreationRequestDto();
+        $courseCreationRequest->code = 'PPBI2';
+        $courseCreationRequest->title = 'TEST';
+        $courseCreationRequest->type = 'rent';
+        $courseCreationRequest->price = 1000;
+
+        $client = self::getClient();
+        $client->request(
+            'POST',
+            $this->apiPath . '/PPBI1234/edit',
+            server: $headers,
+            content: $this->serializer->serialize($courseCreationRequest, 'json')
+        );
+
+        $this->assertResponseCode(Response::HTTP_NOT_FOUND);
+
+        $respose = $this->serializer->deserialize($client->getResponse()->getContent(), 'array', 'json');
+        self::assertEquals(false, $respose['success']);
+        self::assertEquals('Курс с таким кодом не найден', $respose['message']);
     }
 }
