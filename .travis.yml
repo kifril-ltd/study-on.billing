@@ -1,0 +1,44 @@
+language: php
+php:
+  - 7.2
+
+cache:
+  yarn: true
+  directories:
+    - ${HOME}/.composer/cache
+    - ./bin/.phpunit
+
+services:
+  - docker
+
+addons:
+  apt:
+    packages:
+      - docker-ce
+
+before_install:
+  - sudo chown -R ${UID:-1000}:${GID:-1000} $PWD
+  - sudo /etc/init.d/mysql stop
+  - sudo /etc/init.d/postgresql stop
+  - docker -v
+  - docker-compose -v
+  - cp .env.test.local.travis .env.test.local
+  - cp .env.local.travis .env.local
+  - mkdir -p config/jwt
+  - openssl genrsa -out config/jwt/private.pem 2048
+  - openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem
+
+install:
+  - docker-compose --env=.env.local build
+  - docker-compose --env=.env.local up -d
+  - docker-compose ps
+  - docker exec -it billing_study_on_php composer install
+  - docker exec -it billing_study_on_php bin/console doctrine:database:create --env=test
+  - docker exec -it billing_study_on_php bin/console doctrine:migrations:migrate --env=test --no-interaction
+  - docker exec -it billing_study_on_php bin/console doctrine:fixtures:load --env=test --no-interaction
+
+script:
+  - docker exec -it billing_study_on_php bin/phpunit
+
+after_script:
+  - docker-compose --env=.env.local down
