@@ -69,4 +69,114 @@ class TransactionControllerTest extends AbstractTest
 
         $this->assertResponseCode(Response::HTTP_UNAUTHORIZED, $client->getResponse());
     }
+
+    public function testGetTransactionsAthorizedUser()
+    {
+        $user = [
+            'username' => 'user@study-on.local',
+            'password' => 'Qwerty123'
+        ];
+        $token = $this->getToken($user);
+
+        $headers = [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ];
+
+        $client = self::getClient();
+        $client->request(
+            'GET',
+            $this->apiPath . '/',
+            server: $headers,
+        );
+
+        $this->assertResponseOk();
+
+        $response = $this->serializer->deserialize($client->getResponse()->getContent(), 'array', 'json');
+        self::assertCount(9, $response);
+    }
+
+    public function testGetTransactionsWithFilters()
+    {
+        $user = [
+            'username' => 'user@study-on.local',
+            'password' => 'Qwerty123'
+        ];
+        $token = $this->getToken($user);
+
+        $headers = [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ];
+
+        $filters = [
+          'type' => 'deposit'
+        ];
+
+        $client = self::getClient();
+        $client->request(
+            'GET',
+            $this->apiPath . '/?' . http_build_query($filters),
+            server: $headers,
+        );
+
+        $this->assertResponseOk();
+
+        $response = $this->serializer->deserialize($client->getResponse()->getContent(), 'array', 'json');
+
+        self::assertCount(2, $response);
+
+        $filters = [
+            'course_code' => 'PPBI'
+        ];
+
+        $client = self::getClient();
+        $client->request(
+            'GET',
+            $this->apiPath . '/?' . http_build_query($filters),
+            server: $headers,
+        );
+
+        $this->assertResponseOk();
+
+        $response = $this->serializer->deserialize($client->getResponse()->getContent(), 'array', 'json');
+
+        self::assertCount(3, $response);
+
+        $filters = [
+            'course_code' => 'PPBI123'
+        ];
+
+        $client = self::getClient();
+        $client->request(
+            'GET',
+            $this->apiPath . '/?' . http_build_query($filters),
+            server: $headers,
+        );
+
+        $this->assertResponseOk();
+
+        $response = $this->serializer->deserialize($client->getResponse()->getContent(), 'array', 'json');
+
+        self::assertCount(0, $response);
+
+        $filters = [
+            'skip_expired' => true,
+        ];
+
+        $client = self::getClient();
+        $client->request(
+            'GET',
+            $this->apiPath . '/?' . http_build_query($filters),
+            server: $headers,
+        );
+
+        $this->assertResponseOk();
+
+        $response = $this->serializer->deserialize($client->getResponse()->getContent(), 'array', 'json');
+
+        self::assertCount(6, $response);
+    }
+
+
 }

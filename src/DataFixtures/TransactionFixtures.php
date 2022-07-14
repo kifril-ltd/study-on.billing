@@ -9,7 +9,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class TransactionFixtures extends Fixture implements DependentFixtureInterface
+class TransactionFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
@@ -104,11 +104,11 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
-    public function getDependencies()
-    {
-        return [
-            UserFixtures::class,
-            CourseFixtures::class
-        ];
-    }
+//    public function getDependencies()
+//    {
+//        return [
+//            UserFixtures::class,
+//            CourseFixtures::class
+//        ];
+//    }
 }

@@ -76,7 +76,7 @@ class CourseControllerTest extends AbstractTest
         ));
 
         $response = $this->serializer->deserialize($client->getResponse()->getContent(), 'array', 'json');
-        self::assertCount(7, $response);
+        self::assertCount(8, $response);
     }
 
     public function testGetCourseByCodeAuthorizedUser()
