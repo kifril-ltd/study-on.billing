@@ -4,9 +4,10 @@ namespace App\DataFixtures;
 
 use App\Entity\Course;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class CourseFixtures extends Fixture
+class CourseFixtures extends Fixture implements OrderedFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
@@ -72,5 +73,10 @@ class CourseFixtures extends Fixture
             $manager->persist($newCourse);
         }
         $manager->flush();
+    }
+
+    public function getOrder()
+    {
+        return 1;
     }
 }

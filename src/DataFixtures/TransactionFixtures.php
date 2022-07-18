@@ -7,9 +7,10 @@ use App\Entity\Transaction;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class TransactionFixtures extends Fixture
+class TransactionFixtures extends Fixture implements OrderedFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
@@ -111,4 +112,8 @@ class TransactionFixtures extends Fixture
 //            CourseFixtures::class
 //        ];
 //    }
+    public function getOrder()
+    {
+        return 3;
+    }
 }
