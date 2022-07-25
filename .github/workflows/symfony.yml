@@ -1,0 +1,42 @@
+name: Symfony
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+permissions:
+  contents: read
+
+jobs:
+  symfony-tests:
+    runs-on: ubuntu-latest
+    steps:
+    #  To automatically get bug fixes and new Php versions for shivammathur/setup-php,
+    # change this to (see https://github.com/shivammathur/setup-php#bookmark-versioning):
+    # uses: shivammathur/setup-php@v2
+    - uses: shivammathur/setup-php@2cb9b829437ee246e9b3cac53555a39208ca6d28
+      with:
+        php-version: '8.0'
+    - uses: actions/checkout@v3
+    - name: Copy .env.test.local
+      run:  copy('.env.test.local.travis', '.env.test.local');"
+    - name: Copy .env.local
+      run:  copy('.env.local.travis', '.env.local');"
+    - name: Docker-compose build
+      run: docker-compose --env=.env.local build
+    - name: Docker-compose up
+      run: docker-compose --env=.env.local up -d
+    - name: Install Dependencies
+      run: docker exec billing_study_on_php composer install --no-interaction
+    - name: Generate key-pair
+      run: docker exec billing_study_on_php bin/console lexik:jwt:generate-keypair
+    - name: Create Database
+      run: docker exec billing_study_on_php bin/console doctrine:database:create --env=test --no-interaction
+    - name: Load migrations
+      run: docker exec billing_study_on_php bin/console doctrine:migrations:migrate --env=test --no-interaction
+    - name: Load fixtures
+      run: docker exec billing_study_on_php bin/console doctrine:fixtures:load --env=test --no-interaction
+    - name: Execute tests (Unit and Feature tests) via PHPUnit
+      run: docker exec billing_study_on_php bin/phpunit
