@@ -21,9 +21,9 @@ jobs:
         php-version: '8.0'
     - uses: actions/checkout@v3
     - name: Copy .env.test.local
-      run:  copy('.env.test.local.travis', '.env.test.local');"
+      run:  cp .env.test.local.travis .env.test.local
     - name: Copy .env.local
-      run:  copy('.env.local.travis', '.env.local');"
+      run:  cp .env.local.travis .env.local
     - name: Docker-compose build
       run: docker-compose --env=.env.local build
     - name: Docker-compose up
